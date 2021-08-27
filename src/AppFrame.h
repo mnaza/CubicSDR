@@ -57,7 +57,7 @@ public:
 
     void setWaterfallLinesPerSecond(int lps);
     void setSpectrumAvgSpeed(double avg);
-
+    
     FrequencyDialog::FrequencyDialogTarget getFrequencyDialogTarget();
     void refreshGainUI();
     void setViewState(long long center_freq, int bandwidth);
@@ -66,16 +66,16 @@ public:
     long long getViewCenterFreq();
     int getViewBandwidth();
     bool isUserDemodBusy();
-
+    
     BookmarkView *getBookmarkView();
     void disableSave(bool state);
 
-    //call this in case the main UI is not
+    //call this in case the main UI is not 
     //the origin of device changes / sample rate by operator,
     //and must be notified back to update its UI elements
     //(ex: SDR Devices dialog changing the configuration)
     void notifyDeviceChanged();
-
+    
 #ifdef _WIN32
 	bool canFocus();
 #endif
@@ -94,20 +94,19 @@ private:
 	/***
 	 * UI Elements
 	 */
-//  ScopeCanvas *scopeCanvas;
-  SpectrumCanvas *spectrumCanvas;// , *demodSpectrumCanvas;
-  WaterfallCanvas *waterfallCanvas;//, *demodWaterfallCanvas;
-//    TuningCanvas *demodTuner;
-    MeterCanvas *spectrumAvgMeter, *waterfallSpeedMeter; //*demodSignalMeter, *demodGainMeter,
-  ModeSelectorCanvas *peakHoldButton;//, *soloModeButton;//,
-                                     //*deltaLockButton; *demodMuteButton,
-//    GainCanvas *gainCanvas;
+    ScopeCanvas *scopeCanvas;
+    SpectrumCanvas *spectrumCanvas, *demodSpectrumCanvas;
+    WaterfallCanvas *waterfallCanvas, *demodWaterfallCanvas;
+    TuningCanvas *demodTuner;
+    MeterCanvas *demodSignalMeter, *demodGainMeter, *spectrumAvgMeter, *waterfallSpeedMeter;
+    ModeSelectorCanvas *demodModeSelector, *demodMuteButton, *peakHoldButton, *soloModeButton, *deltaLockButton;
+    GainCanvas *gainCanvas;
     BookmarkView *bookmarkView;
 
-//    wxSizerItem *gainSizerItem, *gainSpacerItem;
-    wxSplitterWindow *mainVisSplitter, *bookmarkSplitter;
+    wxSizerItem *gainSizerItem, *gainSpacerItem;
+    wxSplitterWindow *mainVisSplitter, *mainSplitter, *bookmarkSplitter;
 
-//    wxBoxSizer *demodTray;
+    wxBoxSizer *demodTray;
 
     //Use a raw pointer here to prevent a dangling reference
     DemodulatorInstance* activeDemodulator;
@@ -165,7 +164,7 @@ private:
 	SDRDeviceInfo *devInfo = nullptr;
 	std::atomic_bool deviceChanged;
 
-//	ModemProperties *modemProps;
+	ModemProperties *modemProps;
 	std::atomic_bool modemPropertiesUpdated;
 
 	std::vector<std::string> antennaNames;
@@ -175,7 +174,7 @@ private:
     std::string lastToolTip;
 
 #ifdef ENABLE_DIGITAL_LAB
-//    ModeSelectorCanvas *demodModeSelectorAdv;
+    ModeSelectorCanvas *demodModeSelectorAdv;
 #endif
 
 

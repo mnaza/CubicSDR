@@ -170,7 +170,7 @@ ENDIF(MSVC)
 find_package(OpenGL REQUIRED)
 find_package(Liquid REQUIRED)
 include_directories(${LIQUID_INCLUDES})
-SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} ${LIQUID_LIBRARIES} -latomic)
+SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} ${LIQUID_LIBRARIES})
 
 find_package(wxWidgets COMPONENTS gl core propgrid adv base REQUIRED)
 set(wxWidgets_CONFIGURATION mswu)
