@@ -29,20 +29,20 @@ IF(CUSTOM_BUILD)
     SET (CUBICSDR_ENABLE_VIEW_SCOPE ON CACHE BOOL "Enable Demodulator Scope/Spectrum view.")
     SET (CUBICSDR_ENABLE_ABOUT_DIALOG ON CACHE BOOL "Enable About Dialog.")
     SET (CUBICSDR_DEFAULT_HIDE_BOOKMARKS OFF CACHE BOOL "Hide Bookmarks by Default.")
-    SET (CUBICSDR_MODEM_EXCLUDE CACHE "" "Comma-separated list of modems to exclude.")    
+    SET (CUBICSDR_MODEM_EXCLUDE CACHE "" "Comma-separated list of modems to exclude.")
 
     IF (NOT CUBICSDR_HEADER_IMAGE STREQUAL "")
         SET(CUBICSDR_HAS_HEADER_IMAGE TRUE)
         GET_FILENAME_COMPONENT(CUBICSDR_HEADER_IMAGE_FILE "${CUBICSDR_HEADER_IMAGE}" NAME)
         GET_FILENAME_COMPONENT(CUBICSDR_HEADER_IMAGE_DIR "${CUBICSDR_HEADER_IMAGE}" PATH)
-        ADD_DEFINITIONS( 
+        ADD_DEFINITIONS(
             -DCUBICSDR_HEADER_IMAGE="${CUBICSDR_HEADER_IMAGE_FILE}"
             -DCUBICSDR_HEADER_BG="${CUBICSDR_HEADER_BG}"
         )
     ENDIF()
 
     IF (NOT CUBICSDR_MODEM_EXCLUDE STREQUAL "")
-        ADD_DEFINITIONS( 
+        ADD_DEFINITIONS(
             -DCUBICSDR_MODEM_EXCLUDE="${CUBICSDR_MODEM_EXCLUDE}"
         )
     ENDIF()
@@ -54,26 +54,26 @@ ELSE()
     SET (CUBICSDR_HEADER_IMAGE "")
     SET (CUBICSDR_HEADER_BG "")
     # feature flags
-    SET (CUBICSDR_ENABLE_VIEW_DEMOD ON)
+    SET (CUBICSDR_ENABLE_VIEW_DEMOD OFF)
     SET (CUBICSDR_ENABLE_VIEW_SCOPE ON)
     SET (CUBICSDR_DEFAULT_HIDE_BOOKMARKS OFF)
     SET (CUBICSDR_ENABLE_ABOUT_DIALOG ON)
-    SET (CUBICSDR_EXCLUDE_MODEM "")    
+    SET (CUBICSDR_EXCLUDE_MODEM "")
 ENDIF()
 
-IF(CUBICSDR_ENABLE_VIEW_DEMOD) 
+IF(CUBICSDR_ENABLE_VIEW_DEMOD)
     ADD_DEFINITIONS( -DCUBICSDR_ENABLE_VIEW_DEMOD=1 )
 ENDIF()
 
-IF(CUBICSDR_ENABLE_VIEW_SCOPE) 
+IF(CUBICSDR_ENABLE_VIEW_SCOPE)
     ADD_DEFINITIONS( -DCUBICSDR_ENABLE_VIEW_SCOPE=1 )
 ENDIF()
 
-IF(CUBICSDR_DEFAULT_HIDE_BOOKMARKS) 
+IF(CUBICSDR_DEFAULT_HIDE_BOOKMARKS)
     ADD_DEFINITIONS( -DCUBICSDR_DEFAULT_HIDE_BOOKMARKS=1 )
 ENDIF()
 
-IF(CUBICSDR_ENABLE_ABOUT_DIALOG) 
+IF(CUBICSDR_ENABLE_ABOUT_DIALOG)
     ADD_DEFINITIONS( -DCUBICSDR_ENABLE_ABOUT_DIALOG=1 )
 ENDIF()
 
@@ -94,15 +94,15 @@ set(USE_HAMLIB OFF CACHE BOOL "Support hamlib for radio control functions.")
 
 if (USE_HAMLIB)
     find_package(hamlib REQUIRED)
-    
+
     if (NOT HAMLIB_FOUND)
         message(FATAL_ERROR "hamlib development files not found...")
     endif ()
-    
+
     include_directories(${HAMLIB_INCLUDE_DIR})
     link_libraries(${HAMLIB_LIBRARY})
 
-    ADD_DEFINITIONS(-DUSE_HAMLIB)        
+    ADD_DEFINITIONS(-DUSE_HAMLIB)
 endif ()
 
 macro(configure_files srcDir destDir globStr)
@@ -143,7 +143,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     MESSAGE( "64 bit compiler detected" )
     SET( EX_PLATFORM 64 )
     SET( EX_PLATFORM_NAME "x64" )
-else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) 
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     MESSAGE( "32 bit compiler detected" )
     SET( EX_PLATFORM 32 )
     SET( EX_PLATFORM_NAME "x86" )
@@ -154,7 +154,7 @@ SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${EX_PLATFORM_NAME})
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/${EX_PLATFORM_NAME})
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/${EX_PLATFORM_NAME})
 
-IF (MSVC) 
+IF (MSVC)
     include_directories ("${PROJECT_SOURCE_DIR}/external/wglext")
     SET(LIQUID_INCLUDES "${PROJECT_SOURCE_DIR}/external/liquid-dsp/include/" CACHE STRING "Liquid-DSP include directory")
     SET(LIQUID_LIBRARIES "${PROJECT_SOURCE_DIR}/external/liquid-dsp/msvc/${EX_PLATFORM}/libliquid.lib" CACHE STRING "Liquid-DSP Library")
@@ -162,7 +162,7 @@ IF (MSVC)
     SET(HAMLIB_DLLS "${PROJECT_SOURCE_DIR}/external/hamlib/${EX_PLATFORM}/libhamlib-4.dll" CACHE STRING "HAMLIB DLLS")
 ELSE (MSVC)
     ADD_DEFINITIONS(
-        -std=c++0x 
+        -std=c++0x
         -pthread
     )
 ENDIF(MSVC)
@@ -170,7 +170,7 @@ ENDIF(MSVC)
 find_package(OpenGL REQUIRED)
 find_package(Liquid REQUIRED)
 include_directories(${LIQUID_INCLUDES})
-SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} ${LIQUID_LIBRARIES})
+SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} ${LIQUID_LIBRARIES} -latomic)
 
 find_package(wxWidgets COMPONENTS gl core propgrid adv base REQUIRED)
 set(wxWidgets_CONFIGURATION mswu)
@@ -181,13 +181,13 @@ include_directories(${SOAPY_SDR_INCLUDE_DIR})
 SET(OTHER_LIBRARIES ${SOAPY_SDR_LIBRARY} ${OTHER_LIBRARIES})
 ADD_DEFINITIONS(
     -DUSE_SOAPY_SDR=1
-)       
+)
 
 IF (WIN32)
     set(wxWidgets_USE_STATIC ON)
 
     set(BUILD_INSTALLER OFF CACHE BOOL "Build Installer")
-    
+
     # Audio device selection is not mandatory, dummy audio device is used if none are compiled in.
     # Can also compile support for more than one simultaneously.
     set(USE_AUDIO_DS ON CACHE BOOL "Include support for DirectSound")
@@ -197,24 +197,24 @@ IF (WIN32)
 
     # WASAPI
     IF(USE_AUDIO_WASAPI)
-        ADD_DEFINITIONS(-D__WINDOWS_WASAPI__)    
-        IF (NOT MSVC)    
+        ADD_DEFINITIONS(-D__WINDOWS_WASAPI__)
+        IF (NOT MSVC)
             SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} -luuid -lksuser)
         ENDIF(NOT MSVC)
     ENDIF(USE_AUDIO_WASAPI)
 
     # DirectSound
-    IF (USE_AUDIO_DS)    
-        ADD_DEFINITIONS(-D__WINDOWS_DS__)    
-        IF (MSVC)    
+    IF (USE_AUDIO_DS)
+        ADD_DEFINITIONS(-D__WINDOWS_DS__)
+        IF (MSVC)
             SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} dsound.lib)
         ELSE (MSVC)
             SET(OTHER_LIBRARIES ${OTHER_LIBRARIES} -ldsound)
         ENDIF (MSVC)
-    ENDIF(USE_AUDIO_DS)    
-  
+    ENDIF(USE_AUDIO_DS)
+
     SET(USE_MINGW_PATCH OFF CACHE BOOL "Add some missing functions when compiling against mingw liquid-dsp.")
-    IF (USE_MINGW_PATCH) 
+    IF (USE_MINGW_PATCH)
         SET(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} legacy_stdio_definitions.lib libgcc.a")
         ADD_DEFINITIONS(
             -DMINGW_PATCH=1
@@ -259,7 +259,7 @@ IF (UNIX AND NOT APPLE)
         SET(USE_AUDIO_JACK OFF CACHE BOOL "Use Jack Audio")
         SET(USE_AUDIO_ALSA OFF CACHE BOOL "Use ALSA Audio")
         SET(USE_AUDIO_OSS OFF CACHE BOOL "Use OSS Audio")
-  
+
         IF(USE_AUDIO_PULSE)
            SET (OTHER_LIBRARIES ${OTHER_LIBRARIES} pulse-simple pulse)
            ADD_DEFINITIONS(
@@ -300,14 +300,14 @@ ENDIF(UNIX AND NOT APPLE)
 
 IF (APPLE)
     SET(CMAKE_OSX_DEPLOYMENT_TARGET, "10.9")
-  
+
     SET(LIQUID_LIB liquid)
     link_directories(/usr/local/lib)
     link_directories(/opt/local/lib)
 
     ADD_DEFINITIONS(
       -D__MACOSX_CORE__
-    )    
+    )
 
    FIND_LIBRARY(COREAUDIO_LIBRARY CoreAudio)
    SET (OTHER_LIBRARIES ${COREAUDIO_LIBRARY} ${OTHER_LIBRARIES})
@@ -499,7 +499,7 @@ SET (cubicsdr_headers
     src/ui/UITestCanvas.cpp
     src/ui/UITestCanvas.h
     src/ui/UITestContext.cpp
-    src/ui/UITestContext.h    
+    src/ui/UITestContext.h
     src/forms/SDRDevices/SDRDevices.h
     src/forms/SDRDevices/SDRDevicesForm.h
     src/forms/SDRDevices/SDRDeviceAdd.h
@@ -546,7 +546,7 @@ SET (cubicsdr_headers
     src/modules/modem/digital/ModemQAM.h
     src/modules/modem/digital/ModemQPSK.h
     src/modules/modem/digital/ModemFSK.h
-)    
+)
 ENDIF()
 
 
@@ -557,14 +557,14 @@ IF (USE_HAMLIB)
         src/forms/Dialog/PortSelectorDialog.h
         src/rig/RigThread.h
         external/rs232/rs232.h
-    )    
+    )
     SET (cubicsdr_sources
         ${cubicsdr_sources}
 	src/forms/Dialog/PortSelectorDialogBase.cpp
         src/forms/Dialog/PortSelectorDialog.cpp
         src/rig/RigThread.cpp
     )
-    
+
     IF(WIN32)
         SET (cubicsdr_sources
             ${cubicsdr_sources}
@@ -575,15 +575,15 @@ IF (USE_HAMLIB)
             ${cubicsdr_sources}
             external/rs232/rs232-linux.cpp
         )
-    ENDIF()    
-    
-    include_directories ( 
+    ENDIF()
+
+    include_directories (
         external/rs232/
     )
 ENDIF()
 
 
-SET (CUBICSDR_FONTS 
+SET (CUBICSDR_FONTS
     ${PROJECT_SOURCE_DIR}/font/vera_sans_mono12.fnt
     ${PROJECT_SOURCE_DIR}/font/vera_sans_mono16.fnt
     ${PROJECT_SOURCE_DIR}/font/vera_sans_mono18.fnt
@@ -616,8 +616,8 @@ SOURCE_GROUP("Forms\\Bookmark" REGULAR_EXPRESSION "src/forms/Bookmark/${REG_EXT}
 SOURCE_GROUP("Forms\\Dialog" REGULAR_EXPRESSION "src/forms/Dialog/${REG_EXT}")
 SOURCE_GROUP("SDR" REGULAR_EXPRESSION "src/sdr/${REG_EXT}")
 IF(USE_HAMLIB)
-    SOURCE_GROUP("Rig" REGULAR_EXPRESSION "src/rig/${REG_EXT}")    
-    SOURCE_GROUP("_ext-RS-232" REGULAR_EXPRESSION "external/rs232/${REG_EXT}")    
+    SOURCE_GROUP("Rig" REGULAR_EXPRESSION "src/rig/${REG_EXT}")
+    SOURCE_GROUP("_ext-RS-232" REGULAR_EXPRESSION "external/rs232/${REG_EXT}")
 ENDIF()
 SOURCE_GROUP("Demodulator" REGULAR_EXPRESSION "src/demod/${REG_EXT}")
 SOURCE_GROUP("Modem" REGULAR_EXPRESSION "src/modules/modem/${REG_EXT}")
@@ -636,12 +636,12 @@ SOURCE_GROUP("_ext-LodePNG" REGULAR_EXPRESSION "external/lodepng/.*${REG_EXT}")
 SOURCE_GROUP("_ext-TinyXML" REGULAR_EXPRESSION "external/tinyxml/.*${REG_EXT}")
 SOURCE_GROUP("_ext-CubicVR2" REGULAR_EXPRESSION "external/cubicvr2/.*${REG_EXT}")
 
-include_directories ( 
+include_directories (
     ${PROJECT_SOURCE_DIR}/src/forms/SDRDevices
     ${PROJECT_SOURCE_DIR}/src/forms/DigitalConsole
     ${PROJECT_SOURCE_DIR}/src/forms/Bookmark
     ${PROJECT_SOURCE_DIR}/src/forms/Dialog
-    ${PROJECT_SOURCE_DIR}/src/sdr 
+    ${PROJECT_SOURCE_DIR}/src/sdr
     ${PROJECT_SOURCE_DIR}/src/demod
     ${PROJECT_SOURCE_DIR}/src/modules
     ${PROJECT_SOURCE_DIR}/src/modules/modem
@@ -655,7 +655,7 @@ include_directories (
     ${PROJECT_SOURCE_DIR}/src/ui
     ${PROJECT_SOURCE_DIR}/src/rig
     ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/external/lodepng 
+    ${PROJECT_SOURCE_DIR}/external/lodepng
     ${PROJECT_SOURCE_DIR}/external/tinyxml
     ${PROJECT_SOURCE_DIR}/external/cubicvr2/math
 )
@@ -682,7 +682,7 @@ IF (NOT BUNDLE_APP)
         configure_files(${PROJECT_SOURCE_DIR}/external/liquid-dsp/msvc/${EX_PLATFORM}/ ${CMAKE_BINARY_DIR}/${EX_PLATFORM_NAME} "*.dll")
 		configure_files(${PROJECT_SOURCE_DIR}/external/msvc/${EX_PLATFORM_NAME}/ ${CMAKE_BINARY_DIR}/${EX_PLATFORM_NAME} "*.dll")
 		IF(USE_HAMLIB)
-		    configure_files(${PROJECT_SOURCE_DIR}/external/hamlib/${EX_PLATFORM}/ ${CMAKE_BINARY_DIR}/${EX_PLATFORM_NAME} "*.dll")	
+		    configure_files(${PROJECT_SOURCE_DIR}/external/hamlib/${EX_PLATFORM}/ ${CMAKE_BINARY_DIR}/${EX_PLATFORM_NAME} "*.dll")
 		ENDIF(USE_HAMLIB)
     ENDIF()
     IF (CUBICSDR_HAS_HEADER_IMAGE)
@@ -703,10 +703,10 @@ IF (MSVC)
   set_target_properties(CubicSDR PROPERTIES COMPILE_DEFINITIONS_MINSIZEREL "_WINDOWS;WIN32_LEAN_AND_MEAN")
   set(CMAKE_CREATE_WIN32_EXE "/SUBSYSTEM:WINDOWS /ENTRY:\"mainCRTStartup\"")
   set_target_properties (CubicSDR PROPERTIES OUTPUT_NAME "${CUBICSDR_INSTALL_NAME}")
-  
+
   ADD_DEFINITIONS(
         /wd\"4996\"
-  )   
+  )
 ENDIF(MSVC)
 
 IF (APPLE)
@@ -719,14 +719,14 @@ ENDIF(APPLE)
 IF (APPLE AND BUNDLE_APP)
     PROJECT(CubicSDR)
     set(CPACK_BINARY_DRAGNDROP ON)
- 
+
     SET(MACOSX_BUNDLE_BUNDLE_NAME CubicSDR)
-    SET(CPACK_APPLE_BUNDLE_ID "com.cubicproductions.cubicsdr")    
+    SET(CPACK_APPLE_BUNDLE_ID "com.cubicproductions.cubicsdr")
     set(CUBICSDR_CODE_SIGN OFF CACHE BOOL "Code Signing")
-    
+
     set(BUNDLE_SOAPY_MODS OFF CACHE BOOL "Bundle local SoapySDR modules")
     set(BUNDLE_MIR_SDR OFF CACHE BOOL "Bundle mir_sdr for personal use only -- do not distribute.")
-    
+
     IF (BUNDLE_SOAPY_MODS)
         ADD_DEFINITIONS(
             -DBUNDLE_SOAPY_MODS=1
@@ -738,21 +738,21 @@ IF (APPLE AND BUNDLE_APP)
         )
         ENDIF()
     ENDIF()
-    
+
     ADD_DEFINITIONS(
-        -std=c++0x 
+        -std=c++0x
         -pthread
         -D_OSX_APP_
-    )   
-      
-    ADD_EXECUTABLE(CubicSDR 
-        MACOSX_BUNDLE 
+    )
+
+    ADD_EXECUTABLE(CubicSDR
+        MACOSX_BUNDLE
         ${cubicsdr_sources}
-        ${cubicsdr_headers} 
+        ${cubicsdr_headers}
         ${CUBICSDR_FONTS}
         ${PROJECT_SOURCE_DIR}/icon/CubicSDR.icns
-    ) 
-    
+    )
+
     SET_SOURCE_FILES_PROPERTIES(
         ${PROJECT_SOURCE_DIR}/icon/CubicSDR.icns
         PROPERTIES
@@ -777,25 +777,25 @@ IF (APPLE AND BUNDLE_APP)
         MACOSX_BUNDLE_ICON_FILE "CubicSDR.icns"
         MACOSX_BUNDLE_COPYRIGHT "Copyright 2015 Charles J. Cliffe. All Rights Reserved."
     )
-    
+
     SET(APPS "${CMAKE_BINARY_DIR}/${EX_PLATFORM_NAME}/CubicSDR.app")
     # SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
     # SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-        
+
     IF (BUNDLE_SOAPY_MODS)
     message(STATUS "SOAPY_ROOT: ${SOAPY_SDR_ROOT}")
     SET(SOAPY_SDR_MOD_PATH "${SOAPY_SDR_ROOT}/lib/SoapySDR/modules${SOAPY_SDR_ABI_VERSION}")
     message(STATUS "SOAPY_SDR_MOD_PATH: ${SOAPY_SDR_MOD_PATH}")
-    
+
     file(GLOB SOAPY_MODS ${SOAPY_SDR_MOD_PATH}/*.so)
-    
+
     FOREACH(SOAPY_MOD_FILE ${SOAPY_MODS})
             INSTALL( FILES "${SOAPY_MOD_FILE}"
                 DESTINATION "${APPS}/Contents/MacOS/modules"
                 COMPONENT Runtime
             )
     ENDFOREACH()
-        
+
     ENDIF(BUNDLE_SOAPY_MODS)
 
     SET_TARGET_PROPERTIES(CubicSDR PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/cmake/CubicSDRInfo.plist.in")
@@ -822,11 +822,11 @@ IF (APPLE AND BUNDLE_APP)
               " COMPONENT Runtime)
        ENDFOREACH()
    ENDIF(BUNDLE_SOAPY_MODS)
-   
+
    IF (CUBICSDR_CODE_SIGN)
        SET (CUBICSDR_CERT "3rd Party Mac Developer Application: [Name]" CACHE STRING "Code signing certificate name.")
-       MESSAGE(STATUS "Code Signing Enabled: ${CUBICSDR_CERT}")        
-  
+       MESSAGE(STATUS "Code Signing Enabled: ${CUBICSDR_CERT}")
+
        CONFIGURE_FILE(
          "${PROJECT_SOURCE_DIR}/cmake/code_sign.sh.in"
          "${CMAKE_CURRENT_BINARY_DIR}/code_sign.sh"
@@ -835,7 +835,7 @@ IF (APPLE AND BUNDLE_APP)
           "${PROJECT_SOURCE_DIR}/cmake/dmg_sign.sh.in"
           "${CMAKE_CURRENT_BINARY_DIR}/dmg_sign.sh"
          )
-  
+
         ADD_CUSTOM_COMMAND(
             TARGET CubicSDR
             COMMAND chmod ARGS +x ${CMAKE_CURRENT_BINARY_DIR}/code_sign.sh ${CMAKE_CURRENT_BINARY_DIR}/dmg_sign.sh
@@ -847,7 +847,7 @@ IF (APPLE AND BUNDLE_APP)
                 COMMAND \"${CMAKE_CURRENT_BINARY_DIR}/code_sign.sh\"
             )"
         COMPONENT Runtime)
-  
+
         ADD_CUSTOM_COMMAND(
             TARGET CubicSDR
             POST_BUILD
@@ -856,15 +856,15 @@ IF (APPLE AND BUNDLE_APP)
             COMMAND "${CMAKE_CURRENT_BINARY_DIR}/dmg_sign.sh" WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
    ENDIF(CUBICSDR_CODE_SIGN)
-   
-   
+
+
    INSTALL(CODE "
        VERIFY_APP(\"${APPS}\")
        " COMPONENT Runtime)
 
    INSTALL(TARGETS CubicSDR
        BUNDLE DESTINATION . COMPONENT Runtime
-   )       
+   )
 
    include(CPack)
 ENDIF()
@@ -875,17 +875,17 @@ IF(APPLE AND NOT BUNDLE_APP)
     ENDIF()
     ADD_DEFINITIONS(
         -DRES_FOLDER="${CMAKE_INSTALL_PREFIX}/share/cubicsdr/"
-    )    
+    )
 
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,relro")
 
     INSTALL(TARGETS CubicSDR DESTINATION bin)
-        install(FILES 
+        install(FILES
             ${PROJECT_SOURCE_DIR}/src/CubicSDR.png
         DESTINATION share/cubicsdr)
 
-        install(FILES 
+        install(FILES
             ${CUBICSDR_FONTS}
         DESTINATION share/cubicsdr/fonts)
 
@@ -894,8 +894,8 @@ IF(APPLE AND NOT BUNDLE_APP)
       "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
        @ONLY IMMEDIATE)
     ADD_CUSTOM_TARGET(uninstall
-      "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake") 
-          
+      "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
 ENDIF ()
 
 
@@ -903,9 +903,9 @@ IF (WIN32 AND NOT BUILD_INSTALLER)
     ADD_DEFINITIONS(
         -DRES_FOLDER="../share/cubicsdr/"
     )
-    
+
     INSTALL(TARGETS CubicSDR DESTINATION bin)
-    INSTALL(FILES         
+    INSTALL(FILES
         ${LIQUID_DLL}
     DESTINATION bin)
 
@@ -918,16 +918,16 @@ IF (WIN32 AND NOT BUILD_INSTALLER)
         ENDFOREACH()
     ENDIF()
 
-    INSTALL(FILES 
+    INSTALL(FILES
         ${PROJECT_SOURCE_DIR}/src/CubicSDR.png
      DESTINATION share/cubicsdr)
 
-    INSTALL(FILES 
+    INSTALL(FILES
         ${CUBICSDR_FONTS}
      DESTINATION share/cubicsdr/fonts)
 
     IF (CUBICSDR_HAS_HEADER_IMAGE)
-        INSTALL(FILES 
+        INSTALL(FILES
         ${CUBICSDR_HEADER_IMAGE}
      DESTINATION share/cubicsdr/)
     ENDIF()
@@ -943,7 +943,7 @@ IF (WIN32 AND BUILD_INSTALLER)
     set(CPACK_PACKAGE_VENDOR "cubicsdr.com")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CUBICSDR_INSTALL_NAME}")
     SET(CPACK_NSIS_INSTALLED_ICON_NAME "CubicSDR.ico")
-    SET(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE") 
+    SET(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
     set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/icon\\\\NSIS_Header.bmp")
     IF(EX_PLATFORM EQUAL 64)
         SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
@@ -956,29 +956,29 @@ IF (WIN32 AND BUILD_INSTALLER)
         SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CUBICSDR_INSTALL_NAME} ${CPACK_PACKAGE_VERSION} (x86)")
         set(CMAKE_CL_64 FALSE)
     ENDIF(EX_PLATFORM EQUAL 64)
-    
-    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".") 
+
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
     install(TARGETS CubicSDR RUNTIME DESTINATION .)
 
-    install(FILES 
+    install(FILES
         ${PROJECT_SOURCE_DIR}/icon/CubicSDR.ico
         ${LIQUID_DLL}
         DESTINATION .)
 
-    install(FILES 
+    install(FILES
         ${CUBICSDR_FONTS}
         DESTINATION fonts)
 
     IF (CUBICSDR_HAS_HEADER_IMAGE)
-        INSTALL(FILES 
+        INSTALL(FILES
         ${CUBICSDR_HEADER_IMAGE}
         DESTINATION .)
     ENDIF()
-        
+
     IF(USE_HAMLIB)
         FOREACH(HAMLIB_DLL ${HAMLIB_DLLS})
             message(STATUS "Copying Hamlib DLL: ${HAMLIB_DLL}")
-            INSTALL( FILES 
+            INSTALL( FILES
                 ${HAMLIB_DLL}
             DESTINATION .)
         ENDFOREACH()
@@ -994,7 +994,7 @@ IF (WIN32 AND BUILD_INSTALLER)
             -DBUNDLED_MODS_ONLY=1
         )
         ENDIF()
-        
+
         file(GLOB SOAPY_BINS ${SOAPY_SDR_ROOT}/bin/*.dll)
         file(GLOB SOAPY_MODS ${SOAPY_SDR_ROOT}/lib/SoapySDR/modules${SOAPY_SDR_ABI_VERSION}/*.dll)
         message(STATUS "SOAPY_BINS: ${SOAPY_BINS}")
@@ -1002,10 +1002,10 @@ IF (WIN32 AND BUILD_INSTALLER)
         install(FILES ${SOAPY_BINS} DESTINATION .)
         install(FILES ${SOAPY_MODS} DESTINATION modules)
     ENDIF(BUNDLE_SOAPY_MODS)
-    
+
     IF(MSVC)
 		 file(GLOB MSVC_DEPS ${PROJECT_SOURCE_DIR}/external/msvc/${EX_PLATFORM_NAME}/*.dll)
-         install(FILES ${MSVC_DEPS} DESTINATION .)  
+         install(FILES ${MSVC_DEPS} DESTINATION .)
     ENDIF(MSVC)
 
         set(CPACK_PACKAGE_EXECUTABLES CubicSDR "CubicSDR")
@@ -1014,13 +1014,13 @@ IF (WIN32 AND BUILD_INSTALLER)
         install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/external/msvc/${EX_PLATFORM_NAME}/vc_redist.${EX_PLATFORM_NAME}.exe DESTINATION vc_redist)
         set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vc_redist\\\\vc_redist.${EX_PLATFORM_NAME}.exe\\\" /passive /norestart'")
     ENDIF (MSVC)
-          
-          
-    INCLUDE(CPack)    
+
+
+    INCLUDE(CPack)
 ENDIF (WIN32 AND BUILD_INSTALLER)
 
 
-IF (UNIX AND NOT APPLE AND BUILD_DEB) 
+IF (UNIX AND NOT APPLE AND BUILD_DEB)
     set(CPACK_GENERATOR DEB)
     set(CPACK_PACKAGE_NAME "CubicSDR")
     SET(CPACK_DEBIAN_PACKAGE_DEPENDS " libwxgtk3.0-0, libpulse0")
@@ -1036,29 +1036,29 @@ IF (UNIX AND NOT APPLE AND BUILD_DEB)
     ADD_DEFINITIONS(
         -DRES_FOLDER="${CMAKE_INSTALL_PREFIX}/share/cubicsdr/"
         -D_FORTIFY_SOURCE=2
-    )    
-        
+    )
+
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,relro")
 
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/external/deb/deb_post.sh.in" 
+    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/external/deb/deb_post.sh.in"
             "${CMAKE_CURRENT_BINARY_DIR}/deb_post.sh" @ONLY IMMEDIATE)
 
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CubicSDR.desktop.in"
             "${CMAKE_CURRENT_BINARY_DIR}/CubicSDR.desktop" @ONLY IMMEDIATE)
 
     INSTALL(TARGETS CubicSDR DESTINATION bin)
-        install(FILES 
+        install(FILES
             ${PROJECT_SOURCE_DIR}/src/CubicSDR.png
         DESTINATION share/cubicsdr)
 
-        install(FILES 
+        install(FILES
             ${CUBICSDR_FONTS}
         DESTINATION share/cubicsdr/fonts)
-        
-    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/CubicSDR.desktop" 
+
+    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/CubicSDR.desktop"
         DESTINATION share/applications)
-        
+
     INCLUDE(CPack)
 ENDIF()
 IF(UNIX AND NOT APPLE AND NOT BUILD_DEB)
@@ -1067,41 +1067,41 @@ IF(UNIX AND NOT APPLE AND NOT BUILD_DEB)
     ENDIF()
     ADD_DEFINITIONS(
         -DRES_FOLDER="${CMAKE_INSTALL_PREFIX}/share/cubicsdr/"
-    )    
+    )
 
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,relro")
- 
+
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CubicSDR.desktop.in"
             "${CMAKE_CURRENT_BINARY_DIR}/CubicSDR.desktop" @ONLY IMMEDIATE)
 
     INSTALL(TARGETS CubicSDR DESTINATION bin)
- 
-    INSTALL(FILES 
+
+    INSTALL(FILES
             ${PROJECT_SOURCE_DIR}/src/CubicSDR.png
             DESTINATION share/cubicsdr)
 
-    INSTALL(FILES 
+    INSTALL(FILES
             ${CUBICSDR_FONTS}
             DESTINATION share/cubicsdr/fonts)
 
 
     IF (CUBICSDR_HAS_HEADER_IMAGE)
-        INSTALL(FILES 
+        INSTALL(FILES
             ${CUBICSDR_HEADER_IMAGE}
             DESTINATION share/cubicsdr)
     ENDIF()
 
     INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/CubicSDR.desktop"
             DESTINATION share/applications)
-        
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/external/deb/deb_post.sh.in" 
+
+    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/external/deb/deb_post.sh.in"
             "${CMAKE_CURRENT_BINARY_DIR}/deb_post.sh" @ONLY IMMEDIATE)
     CONFIGURE_FILE(
       "${PROJECT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
       "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
        @ONLY IMMEDIATE)
     ADD_CUSTOM_TARGET(uninstall
-      "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake") 
+      "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
 ENDIF()
